@@ -1,3 +1,0 @@
-#récuperer le code source de la page
-#recupère tout les fichier contenant le mot gif
-curl http://9gag.com/ | grep "gif"

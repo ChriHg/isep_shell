@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+function aide {
+
+        echo -e -n "Ce script permet de récupérer les dernières actualités footballistiques sur le site de lequipe.fr \nLa recherche par mots clés permet de cibler une actualité"
+        echo -e "Elle se limite à une recherche dans les URLs des différents articles, et non dans le contenu lui même, plusieurs mots peuvent être saisis en les séparant par un espace \n"
+        echo -e "Utilisation : ./script.sh [-OPTS] [MOTS CLEFS...] \n"
+}
+#récuperer le code source de la page
+#recupère tout les fichier contenant le mot gif
+curl http://9gag.com/ | grep "gif" < stockage.txt
+
+
+
+
+
+
+
+
