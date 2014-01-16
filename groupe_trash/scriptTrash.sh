@@ -1,24 +1,23 @@
 #!/bin/bash
 
-#On se place dans le dossier sensé contenir la corbeille: Trash
+#We go to the directory where the trash is
 cd ~/.local/share/
 
 trash=0
-trashPleine=1
-#Condition sur l'existence du répertoire Trash(-d pour directory)
+trashFull=1
+#Checking if Trash direcory exists
 if [ -d "Trash/" ]; then
   
-	#Si la corbeille existe, on se déplace dans le sous-dossier files contenant les éléments à supprimer
+	#If trash directory exists, we go to "files" directory, where the files we want to delete will be.
   echo Directory Trash exists
-  cd Trash/files/
+  cd Trash/files
   
-	#La taille minimale du sous-dossier files est de 4ko
+	#The minimal size of the sub-file "files" is 4ko
   sizeMin=4,0
-  
-	#La commande suivante permet d'obtenir la taille du sous-dossier files
+  #The next command allow us to get the sub-file "files" size.
   sizeFiles=$(du -h | grep . | sort -n | tail -n 1 | cut -d K -f 1)
   
-	#Le dossier files pese 4ko,on v�rifie qu'il n'y est pas de petit fichier pour s'assurer que la corbeille est vide
+	#Checking if there is no little file in "files", to be sure the trash is empty
   if [ $sizeFiles = $sizeMin ]; then
 		findFile=`find . -type f`
     if [ "$findFile" = "" ]; then 
@@ -27,20 +26,20 @@ if [ -d "Trash/" ]; then
       trash=1
       echo Trash contains some files
     fi
-	#Le dossier files est différent de 4ko, il contient des éléments
+	#"files" size different from 4ko , trash contains some files
 	else
     trash=1
 		echo Trash contains some files
   fi
 fi
-		#On vérifie que tous les arguments nécessaires à la suppression 
-		#sélective sont indiqués par l'utilisateur
-		#$1: pl(plus) ou mi(minus); $2: taille; $3: unité (ko, mo)
-if [ $trash = $trashPleine ]; then
-  if [ $1 ] && [ $2 ] && [  $3 ]; then
+
+if [ $trash = $trashFull ]; then
+	  #checking that all the requested arguments to delete are given by the user
+		#$1: pl(plus) or mi(minus); $2: size; $3: (ko, mo)
+  if [ $1 ] && [ $2 ] && [ $3 ]; then
  	 	case $1 in
- 	 		pl) find . -size + $2$3 -exec rm {} + 1>> ~/log;;
- 	 		mi) find . -size - $2$3 -exec rm {} + 1>> ~/log;;
+ 	 		pl) find . -size +$2$3 -exec rm -rf {} + 1>> ~/log;;
+ 	 		mi) find . -size -$2$3 -exec rm -rf {} + 1>> ~/log;;
     esac
     echo Finish
   else
