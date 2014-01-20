@@ -24,7 +24,7 @@ function filterCDATA() {
 cat titleAndDescriptionOfURL2.txt | grep '\(<!\[CDATA\[\|\]\]>\)' | sed -e 's/<!\[CDATA\[//g' -e 's/\]\]>//g'  | sed -e '1,3d' | sed -e :a -e '/.!$/N ; G ; ta'
 }
 
-function result(){
+function fusionRSS1andRSS2(){
 echo "------- Résultats du flux choisi n°1 : " 
 curl -s  "$url_flux1" | grep -E -m 1 "(title>)" | sed -e 's/<title>//g' -e 's/<\/title>//g'
 echo
@@ -34,16 +34,16 @@ echo
 echo
 echo
 echo "------- Résultats du flux choisi n°2 : "
-curl -s  "$url_flux2" | grep -E -m 1 "(title)" | sed -e 's/<title>//g' -e 's/<\/title>//g' | grep '\(<!\[CDATA\[\|\]\]>\)' | sed -e 's/<!\[CDATA\[//g' -e 's/\]\]>//g' | sed 's/^[ \t]*//g;s/[ \t]*$//g'
+curl -s  "$url_flux2" | grep -E -m 1 "(title)" | sed -e 's/<title>//g' -e 's/<\/title>//g' | grep '\(<!\[CDATA\[\|\]\]>\)' | sed -e 's/<!\[CDATA\[//g' -e 's/\]\]>//g' 
 echo
 echo
 filterCDATA
 }
 
-result - > results.txt
+fusionRSS1andRSS2 - > fusionRSS1andRSS2.txt
 ############### Refine text ############### 
 function deleteSpaceBeforeLine() {
-cat results.txt | sed 's/^[ \t]*//g;s/[ \t]*$//g' | fold -w 80 -s 
+cat fusionRSS1andRSS2.txt | sed 's/^[ \t]*//g;s/[ \t]*$//g' | fold -w 80 -s 
 }
 #-s : no cut a word in end of line
 
