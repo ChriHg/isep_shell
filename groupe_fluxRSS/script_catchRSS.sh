@@ -1,9 +1,5 @@
 #!/bin/bash
 
-
-
-
-
 # just put in a variable to have the clearest code
 url_flux1="http://www.sport.fr/RSS/sport1.xml"
 url_flux2="http://rss.leparisien.fr/leparisien/rss/une.xml"
@@ -34,7 +30,7 @@ showTitleAndDescriptionOfURL2 - > titleAndDescriptionOfURL2.txt
 
 ############### Filter CDATA in URL2 ############### 
 function filterCDATA() {
-cat titleAndDescriptionOfURL2.txt | grep '\(<!\[CDATA\[\|\]\]>\)' | sed -e 's/<!\[CDATA\[//g' -e 's/\]\]>//g' 
+cat titleAndDescriptionOfURL2.txt | grep '\(<!\[CDATA\[\|\]\]>\)' | sed -e 's/<!\[CDATA\[//g' -e 's/\]\]>//g' | sed -e 's/^[ \t]*//g' | fold -w 80 -s
 }
 
 ############### Fusion of .txt files ############### 
@@ -49,17 +45,34 @@ cat titleAndDescriptionOfURL1.txt | sed -e 's/^[ \t]*//g' | fold -w 80 -s
 
 ############### Final .txt ############### 
 deleteSpaceBeforeLine - > yourRSSNews.txt
+
+############### INTERFACE ###############
+#echo "Welcome on Your RSS New"
+#echo "Your News concern Sport.fr and Le Parisien"
+#echo "Now you can read them if you desire..."
+#echo "Do you want your RSS News now ?"
+#echo "So choose Y (Yes) or N (No)."
+
+#if (Y){
+#open
+#}
+#else if (N){
+#echo "Goodbye, and come back !"
+#}
+#else { (enfin il faut un while)
+#echo "Oups there is a mistake !"
+#echo "Do you want your RSS News now ?"
+#echo "So choose Y (Yes) or N (No)."
+#}
    
 # send the content of a text file by mail :
 #function mail() {
-#mail -s "Flux RSS Quotidiens" ayako.dumont@gmail.com < resultatflux4.txt
+#mail -s "Your RSS News" ayako.dumont@gmail.com < resultatflux4.txt
 #}
 
-# if just want to send a mail
-#echo "Bonjour, voici le contenu des flux que vous avez choisis :" | mail -s "Flux RSS : News" ayako.dumont@gmail.com
 
 # execute fluxrss.sh everyday at 9:oo
 #function freq() {
-#crontab -e
+#crontab 
 #0 9 * * * fluxrss-aya.sh
 #}
