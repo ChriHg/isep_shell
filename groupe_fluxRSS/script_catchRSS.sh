@@ -36,7 +36,7 @@ cat titleAndDescriptionOfURL2.txt | grep '\(<!\[CDATA\[\|\]\]>\)' | sed -e 's/<!
 
 ############### Fusion of both RSS #########################
 function fusionRSS1andRSS2(){
-echo "------- Résultats du flux choisi n°1 : " 
+echo "------- Results for RRS n°1 : " 
 curl -s  "$url_flux1" | grep -E -m 1 "(title>)" | sed -e 's/<title>//g' -e 's/<\/title>//g'
 echo
 echo
@@ -44,7 +44,7 @@ showTitleAndDescriptionOfURL1
 echo
 echo
 echo
-echo "------- Résultats du flux choisi n°2 : "
+echo "------- Results for RSS n°2 : "
 curl -s  "$url_flux2" | grep -E -m 1 "(title)" | sed -e 's/<title>//g' -e 's/<\/title>//g' | grep '\(<!\[CDATA\[\|\]\]>\)' | sed -e 's/<!\[CDATA\[//g' -e 's/\]\]>//g' 
 echo
 echo
@@ -81,30 +81,40 @@ mail -s "Your RSS News" $email < yourRSSNews.txt
 ############### INTERFACE ###################################
 function choiceToSeeNews()
 {
+echo
 echo "Welcome on Your RSS New !"
 echo "Your News concern Sport.fr and Futura-Sciences"
 echo "Now you can read them if you desire..."
 echo "Do you want your RSS News now by email ?"
 read -p "So choose Y (Yes) or N (No)." answer
+echo
 
-
+continue=true
+while $continue
+do
+echo
+echo "Oups there is a mistake !"
+echo "Do you want your RSS News now by email ?"
+read -p "So choose Y (Yes) or N (No)." answer
+if [ "$answer" == "Y" ] || [ "$answer" == "N" ] 
+then 
+continue=false
+fi
+done
 if [ "$answer" == "Y" ] 
 then
 read -p "Enter your email : " email
 sendMail
 echo "You will receive very soon your RRS News !"
 echo "Good bye."
+break
 elif [ "$answer" == "N" ] 
 then
 echo "Goodbye, and come back !"
-else
-while [ "$answer" != "Y" ] || [ "$answer" != "N" ] 
-do
-echo "Oups there is a mistake !"
-echo "Do you want your RSS News now by email ?"
-read -p "So choose Y (Yes) or N (No)." answer
-done
+break
 fi
 }
+
+
 choiceToSeeNews
 #############################################################
