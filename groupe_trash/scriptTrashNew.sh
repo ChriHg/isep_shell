@@ -1,9 +1,13 @@
 #!/bin/bash
 
-SizeChoice(){
-	 read -p "Choose  (pl or mi) " first
-        read -p "Choose size example : 500 " second
-        read -p "Choose weight example : k for Ko " third
+#Function
+sizeChoice(){
+	 read -p "Choose  (pl or mi) ->" first
+        read -p "Choose size (example : 500 ) ->" second
+        read -p "Choose weight (example : k for Ko) ->" third
+
+                #Checking that all the requested arguments to delete are given by the user 
+                #$1: pl(plus) ou mi(minus); $2: size; $3: (ko, mo)
                 if [ $first ] && [ $second ] && [  $third ]; then
                         case $first in
                                 pl)  sign=+;;
@@ -17,15 +21,15 @@ else
                 fi  
 };
 
-TimeChoice(){
+timeChoice(){
 
- read -p "Delete files older than  (enter a number)" day
+ read -p "Delete files older than  (enter a number of days) ->" day
 
 if [ $day ]; then
 
-find . -ctime +$day -exec rm -rfv {} + 1 >>~/log
+echo "Execute "  $(date -d 'now')>>~/log
 
-echo Execute
+find . -ctime $day -exec rm -rfv {} + 1>>~/log
 
 else
 	echo No Parameter
@@ -33,25 +37,48 @@ fi
 
 };
 
+#there is a problem with this function 
+configCron(){
+
+ read -p "Do you want to change de crontab?(o) or (n) ->" response
+	case $response in
+		o) crontab -l > crontab.tmp
+			read -p "Configure the crontab : ->" crontab
+#Configure the cron with the new value and make a  log file too			
+echo "$crontab cd $PWD/ ; sh $PWD/scriptTrashNew.sh" >> crontab.tmp  > crontab.log 2>&1
+			
+			#Configure crontab	
+			crontab crontab.tmp
+			echo "Crontab configure";;
+	esac
+}
+
+#main
+
+#program the crontab but there is a problem i dont know what it is
+#Must be here
+#configCron
+
 #We go to the directory where the trash is
 cd ~/.local/share/
 
 trash=0
 trashFull=1
-#If trash directory exists, we go to "files" directory,  where the files we want to delete will be.
+#Checking if Trash directory exists
 if [ -d "Trash/" ]; then
   
-	#Si la corbeille existe, on se déplace dans le sous-dossier files contenant les éléments à supprimer
+	##If trash directory exists, we go to "files" directory,  where the files we want to delete will be.
   echo Directory Trash exists
+
   cd Trash/files
   
-	#La taille minimale du sous-dossier files est de 4ko
+	#The minimal size of the sub-file "files" is 4ko
   sizeMin=4,0
   
-	#La commande suivante permet d'obtenir la taille du sous-dossier files
+	#The next command allow us to get the sub-file 'files' size.
   sizeFiles=$(du -h | grep . | sort -n | tail -n 1 | cut -d K -f 1)
   
-	#Le dossier files pese 4ko,on v�rifie qu'il n'y est pas de petit fichier pour s'assurer que la corbeille est vide
+	#Checking if there is no little file in "files", to be sure the trash is empty
   if [ $sizeFiles = $sizeMin ]; then
 		findFile=`find . -type f`
     if [ "$findFile" = "" ]; then 
@@ -60,7 +87,7 @@ if [ -d "Trash/" ]; then
       trash=1
       echo Trash contains some files
     fi
-	#Le dossier files est différent de 4ko, il contient des éléments
+	#files size different from 4ko, trash contains some files
 	else
     trash=1
 		echo Trash contains some files
@@ -68,16 +95,17 @@ if [ -d "Trash/" ]; then
 else
 echo Trash doesn t exist. Task is going to stop
 fi
-		#On vérifie que tous les arguments nécessaires à la suppression 
-		#sélective sont indiqués par l'utilisateur
-		#$1: pl(plus) ou mi(minus); $2: taille; $3: unité (ko, mo)
+
+
 if [ $trash = $trashFull ]; then
 
-read -p "Do you want to delete by size(s) or time (t)?" choice
+read -p "Do you want to delete by size(s) or time (t)? ->" choice
 
 case $choice in 
- s)   SizeChoice;;
- t)  TimeChoice;;
+#delete by size
+ s)   sizeChoice;;
+#delete by  day
+ t)  timeChoice;;
 esac
 fi
 
