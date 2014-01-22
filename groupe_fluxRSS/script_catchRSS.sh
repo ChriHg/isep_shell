@@ -85,6 +85,7 @@ echo
 echo "Welcome on Your RSS New !"
 echo "Your News concern Sport.fr and Futura-Sciences"
 echo "Now you can read them if you desire..."
+echo
 echo "Do you want your RSS News now by email ?"
 read -p "So choose Y (Yes) or N (No)." answer
 echo
@@ -92,10 +93,10 @@ echo
 continue=true
 while $continue
 do
-echo
 echo "Oups there is a mistake !"
 echo "Do you want your RSS News now by email ?"
 read -p "So choose Y (Yes) or N (No)." answer
+echo
 if [ "$answer" == "Y" ] || [ "$answer" == "N" ] 
 then 
 continue=false
@@ -107,11 +108,11 @@ read -p "Enter your email : " email
 sendMail
 echo "You will receive very soon your RRS News !"
 echo "Good bye."
-break
+echo
 elif [ "$answer" == "N" ] 
 then
 echo "Goodbye, and come back !"
-break
+echo
 fi
 }
 
