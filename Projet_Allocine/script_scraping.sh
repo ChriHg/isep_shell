@@ -25,3 +25,11 @@ do
  echo ${myDescriptions[$i]} >> final.txt
  echo "\n" >> final.txt
 done
+
+
+cat mails.txt | while read line 
+do 
+if [ "$line" != "" ]; then
+mail -s "News Allocine" $line > final.txt 
+fi
+done
