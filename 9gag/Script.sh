@@ -1,56 +1,37 @@
 #!/bin/bash
+
+
+#si on rentre l'adresse mail a l'endroit du mail et qu'on lance le script on recevra les 10 premier gif de 9gag 
+
+
+
 # On efface le dossier et les fichiers contenus
-rm -rf ~/9gag_sh/
+#Suprime le dossier
+rm -rf 9gag_sh
+
 # On créé un dossier dans le répertoire personnel et on se place dedans
-mkdir ~/9gag_sh/ 
-cd ~/9gag_sh/
+mkdir 9gag_sh
+cd 9gag_sh
 
-# On télécharge le code source qu'on enregistre dans un fichier page, sans afficher les opérations.
-curl -s http://9gag.com/ > 9gag_sh/stockage
+# recupere les 10 premier lien des gif de 9gag et les met dans gif.txt
+curl -s http://9gag.com/gif | sed -n '/data-image=.*/,/>/p' | cut -c68-127 |sed -e '2d;4d;6d;8d;10d;12d;14d;16d;18d;20d' > gif.txt
 
-#compter le nombre de .gif qu'il y a 
-max=$(grep -o "\.gif$" stockage | wc -l)
-
-echo "" > url
-
-# On telecharge chacun des gif et on y créé un fichier url par gif
-if [[ $max != 0 ]] ; then
-        for i
-                do
-                        grep -o "\.gif$" 9gag_sh/stockage | grep -o -E 'data-image="([^"#]+)"' | cut -d'"' -f2  >> url
-                done
-fi
-
-rm -rf 9gag_sh/stockage/images/
-# On créé un dossier dans le répertoire personnel et on se place dedans
-mkdir 9gag_sh/stockage/images/ 
-cd 9gag_sh/stockage/images/
-
-for url in $(cat urls)
+# télécharge les 10 gif
+let "url = 1"
+let "max=11"
+while [ $url -ne $max ]
 do
-	curl $url
+echo "$url"
+temp=$(sed -n ''"${url////\/}"'p' gif.txt)
+echo "$temp"
+curl $temp > $url.gif
+let "url=url+1"
+
 done
 
+#(echo -e "Ci-joint le fichier de gifs ";cat 1.gif & 2.gif | iconv -f utf8 -t iso-8859-1 | uuencode 1.gif & 2.gif) | mail -s "fichiers gif en PJ" mail@
+ 
+#envoie par mail les 10 gif du repertoir
+echo "Ci-joint 10 gif 9gag" | mutt -s "Les gif de 9gag" -a *.gif -- mail@mail.com
+
 exit
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#recuperer une url > création d'un fichier/url
-#url1
-#url2
-
-#telecharger les images contenu dans les url des fichers
-
