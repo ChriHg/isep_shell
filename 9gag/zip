@@ -1,1 +1,0 @@
-find /some/where -type gif ! -iname '*.gz' -exec gzip '{}' \;
