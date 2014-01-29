@@ -16,47 +16,66 @@ cd 9gag_sh
 # recupere les 10 premier lien des gif de 9gag et les met dans gif.txt
 curl -s http://9gag.com/gif | sed -n '/data-image=.*/,/>/p' | cut -c68-127 |sed -e '2d;4d;6d;8d;10d;12d;14d;16d;18d;20d' > gif.txt
 
-# télécharge les 10 gif
+#compte le nombre de liens
+nblien=$(cat gif.txt 2> /dev/null |wc -l)
+echo "Il y a $nblien liens"
+
+# télécharge les 10 premier gifs
 let "url = 1"
 let "max=11"
-while [ $url -ne $max ]
+let "nblien=nblien+1"
+
+while [ $url -ne $max ] && [ $url -ne $nblien ]
 do
 echo "$url"
 temp=$(sed -n ''"${url////\/}"'p' gif.txt)
 echo "$temp"
 curl $temp > $url.gif
 let "url=url+1"
-
 done
-
-#(echo -e "Ci-joint le fichier de gifs ";cat 1.gif & 2.gif | iconv -f utf8 -t iso-8859-1 | uuencode 1.gif & 2.gif) | mail -s "fichiers gif en PJ" mail@
  
-#envoie par mail les 10 gif du repertoire
+#fonction qui permet l'envoi des mails
 function envoiMail() { 
-mail -s "Les gif de 9gag" $email < 9gag_sh
-echo "Ci-joint 10 gif 9gag"
+echo "Ci-joint 10 gifs 9gag !!" | mutt -s "Les gifs de 9gag" -a *.gif -- $email
 }
 
+#boite de dialogue qui demande si l'utilisateur veut recevoir des mails avec les gif de 9gag
 function Gif() {
 echo "Bienvenue sur les .gif du site 9gag"
 echo "Voulez-vous recevoir les 10 derniers .gif du site 9gag tout les matins à 9heures ?"
-read -p "Choississez la réponse Y(yes) ou N(no)" reponse 
 
-while ["$reponse" == "Y"]||["$reponse" == "N"]
+continuer=true
+
+while $continuer
+
 do
-echo "Entrez soit Y ou N"
+read -p "Choisissez la réponse Y(yes) ou N(no)" reponse 
+echo
 
-if ["$reponse" = "Y"]
-then read -p "Entrez votre email" email
+if [ $reponse == "Y" ] || [ $reponse == "N" ]
+then
+continuer=false
+
+else
+echo "Ok"
+fi
+
+done
+
+if [ $reponse == "Y" ]
+then
+read -p "Entrez votre email" email
 envoiMail
 
 echo "Vous recevrez très bientot votre quotidienne des gif 9gag"
 echo "Aurevoir"
 
-elif ["$reponse" = "N"]
-then echo "Aurevoir, et à bientot"
+elif [ $reponse == "N" ]
+then 
+echo "Aurevoir, et à bientot"
 
 fi
+
 }
 
 Gif
