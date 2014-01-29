@@ -9,14 +9,14 @@ url_flux2="http://www.futura-sciences.com/rss/actualites.xml"
 
 ############### Title & Description of RRS 1 ############### 
 function showTitleAndDescriptionOfURL1() {
-curl -s  "$url_flux1" | grep -E "(title>|description>)" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e 's/<description>/   /g' -e 's/<\/description>//g'  | sed -e '1,3d' | sed 'G;n;G;' 
+curl -s  "$url_flux1" | grep -E "(title>|description>)" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e 's/<description>//g' -e 's/<\/description>//g'  | sed -e '1,3d' | sed -e :a -e '/.!$/N ; G ; ta'
 }
 ############################################################
 
 
 ############### Title & Description of RRS 2 ############### 
 function showTitleAndDescriptionOfURL2() {
-curl -s  "$url_flux2" | grep -E "(title>|description>)" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e 's/<description>/   /g' -e 's/<\/description>//g' 
+curl -s  "$url_flux2" | grep -E "(title>|description>)" | sed -e 's/<title>//g' -e 's/<\/title>//g' -e 's/<description>//g' -e 's/<\/description>//g' 
 echo
 }
 ############################################################
